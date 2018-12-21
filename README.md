@@ -1,6 +1,6 @@
 # shopify-graphql-node
 
-> 
+> Shopify GraphQL for Node
 
 ## Installation
 
