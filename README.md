@@ -65,6 +65,8 @@ GraphQLClient
 
 * For more example, please read [here](examples)
 
+## Customize fetcher
+
 ## Issue
 
 If you have any issue or question, please [create new issue](https://github.com/baorv/shopify-graphql-node/issues/new)
