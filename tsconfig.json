@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "dist",
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "lib": [
+      "es2015",
+      "es2016",
+      "dom",
+      "esnext.asynciterable"
+    ],
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
