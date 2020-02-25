@@ -21,10 +21,9 @@
   "scripts": {
     "prebuild": "npm run lint",
     "prepublish": "npm run build",
-    "build": "rm -rf dist && tsc --target ES6  -d src/** --outDir dist",
-    "buildForTest": "rm -rf dist && tsc -d",
+    "build": "rm -rf dist && tsc -d",
     "lint": "tslint --project . {examples,src,test}/**/*.ts",
-    "test": "npm run lint && npm run buildForTest && ava --serial",
+    "test": "npm run lint && npm run build && ava --serial",
     "semantic-release": "semantic-release",
     "cz": "git-cz",
     "travis-deploy-once": "travis-deploy-once"

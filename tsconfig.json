@@ -5,7 +5,7 @@
     "outDir": "dist",
     "strictNullChecks": true,
     "moduleResolution": "node",
-    "rootDir": ".",
+    "rootDir": "src",
     "sourceMap": true,
     "noUnusedLocals": true,
     "lib": [
@@ -18,6 +18,8 @@
     "esModuleInterop": true
   },
   "exclude": [
+    "examples",
+    "tests",
     "node_modules"
   ]
 }
