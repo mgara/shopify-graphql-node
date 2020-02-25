@@ -1,23 +1,23 @@
 {
-  "name": "shopify-graphql-node",
-  "version": "0.0.3",
+  "name": "shopify-graphql-client",
+  "version": "0.0.1",
   "main": "dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
   "license": "MIT",
-  "author": "baorv <roanvanbao@gmail.com>",
+  "author": "Meher Gara <meher.gara@gmail.com>",
   "bugs": {
-    "url": "https://github.com/baorv/shopify-graphql-node/issues"
+    "url": "https://github.com/mgara/shopify-graphql-node/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:baorv/shopify-graphql-node.git"
+    "url": "git@github.com:mgara/shopify-graphql-node.git"
   },
   "keywords": [
     "graphql",
     "shopify",
     "api"
   ],
-  "homepage": "https://github.com/baorv/shopify-graphql-node",
+  "homepage": "https://github.com/mgara/shopify-graphql-node",
   "scripts": {
     "prepublish": "npm run build",
     "build": "rm -rf dist && tsc -d",
