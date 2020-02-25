@@ -1,8 +1,8 @@
 {
   "name": "shopify-graphql-client",
   "version": "0.0.1",
-  "main": "dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "typings": "./dist/index.d.ts",
   "license": "MIT",
   "author": "Meher Gara <meher.gara@gmail.com>",
   "bugs": {
@@ -19,10 +19,12 @@
   ],
   "homepage": "https://github.com/mgara/shopify-graphql-node",
   "scripts": {
+    "prebuild": "npm run lint",
     "prepublish": "npm run build",
-    "build": "rm -rf dist && tsc -d",
+    "build": "rm -rf dist && tsc --target ES6  -d src/** --outDir dist",
+    "buildForTest": "rm -rf dist && tsc -d",
     "lint": "tslint --project . {examples,src,test}/**/*.ts",
-    "test": "npm run lint && npm run build && ava --serial",
+    "test": "npm run lint && npm run buildForTest && ava --serial",
     "semantic-release": "semantic-release",
     "cz": "git-cz",
     "travis-deploy-once": "travis-deploy-once"
@@ -48,8 +50,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "files": [
-    "./dist"
-  ]
+  }
 }
