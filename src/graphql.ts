@@ -1,27 +1,65 @@
-import {ClientError, LeakyBucketError, Variables} from "./errors";
-import {Fetcher, RawFetcher} from "./fetcher";
+import { ClientError, LeakyBucketError, Variables } from "./errors";
+import { Fetcher, RawFetcher } from "./fetcher";
 
 class GraphQL {
-
   private url: string;
   private domain: string;
   private accessToken: string;
   private headers: HeadersInit = {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json"
   };
   private fetcher: Fetcher;
 
-  public constructor(domain: string, accessToken: string, fetcher?: Fetcher) {
+  private api: string;
+  private apiVersion: string;
+
+  public constructor(
+    domain: string,
+    accessToken: string,
+    api: string,
+    fetcher?: Fetcher
+  ) {
+    this.apiVersion = "2020-01";
+
+    if (!["admin", "storefront"].includes(api)) {
+      throw new Error(
+        "the api must be one of 'storefront' or 'admin' for this instance"
+      );
+    }
+
+    this.api = api;
+
     if (domain.endsWith(".myshopify.com")) {
       domain = domain.replace(".myshopify.com", "");
     }
+
     this.domain = domain;
     this.accessToken = accessToken;
-    this.url = `https://${domain}.myshopify.com/admin/api/graphql.json`;
-    this.headers = {
-      ...this.headers,
-      "X-Shopify-Access-Token": this.accessToken,
-    };
+
+    this.url = "";
+
+    if (this.api === "admin") {
+      this.url = `https://${domain}.myshopify.com/admin/api/graphql.json`;
+    }
+
+    if (this.api === "storefront") {
+      this.url = `https://${domain}.myshopify.com/api/${this.apiVersion}/graphql.json/`;
+    }
+
+    if (this.api === "admin") {
+      this.headers = {
+        ...this.headers,
+        "X-Shopify-Access-Token": this.accessToken
+      };
+    }
+
+    if (this.api === "storefront") {
+      this.headers = {
+        ...this.headers,
+        "X-Shopify-Storefront-Access-Token": this.accessToken
+      };
+    }
+
     if (typeof fetcher !== "undefined") {
       this.fetcher = fetcher;
     } else {
@@ -29,32 +67,37 @@ class GraphQL {
     }
   }
 
-  public async request<T extends any>(query: string, variables?: Variables): Promise<any> {
+  public async request<T extends any>(
+    query: string,
+    variables?: Variables
+  ): Promise<any> {
     const body = JSON.stringify({
       query,
-      variables: variables ? variables : undefined,
+      variables: variables ? variables : undefined
     });
 
     const response = await this.fetcher.post(this.url, {
       body,
-      headers: this.headers,
+      headers: this.headers
     });
 
     const result = await this.getResult(response);
     if (response.ok && !result.errors && result.data) {
       return result.data;
     } else {
-      const errorResult = typeof result === "string" ? {error: result} : result;
+      const errorResult =
+        typeof result === "string" ? { error: result } : result;
       if (response.status === 429) {
         throw new LeakyBucketError(
-          {...errorResult, status: response.status},
-          {query, variables},
+          { ...errorResult, status: response.status },
+          { query, variables },
           0,
-          40);
+          40
+        );
       }
       throw new ClientError(
-        {...errorResult, status: response.status},
-        {query, variables},
+        { ...errorResult, status: response.status },
+        { query, variables }
       );
     }
   }
@@ -71,14 +114,14 @@ class GraphQL {
     this.accessToken = accessToken;
     this.headers = {
       ...this.headers,
-      "X-Shopify-Access-Token": this.accessToken,
+      "X-Shopify-Access-Token": this.accessToken
     };
   }
 
   public withDetailedCost() {
     this.headers = {
       ...this.headers,
-      "X-Graphql-Cost-Include-Fields": "true",
+      "X-Graphql-Cost-Include-Fields": "true"
     };
   }
 
