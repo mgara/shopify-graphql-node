@@ -39,7 +39,7 @@ class GraphQL {
     this.url = "";
 
     if (this.api === "admin") {
-      this.url = `https://${domain}.myshopify.com/admin/api/graphql.json`;
+      this.url = `https://${domain}.myshopify.com/admin/api/${this.apiVersion}/graphql.json`;
     }
 
     if (this.api === "storefront") {
