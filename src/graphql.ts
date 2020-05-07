@@ -6,7 +6,7 @@ class GraphQL {
   private domain: string;
   private accessToken: string;
   private headers: HeadersInit = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
   private fetcher: Fetcher;
 
@@ -17,9 +17,10 @@ class GraphQL {
     domain: string,
     accessToken: string,
     api: string,
+    apiVersion: string,
     fetcher?: Fetcher
   ) {
-    this.apiVersion = "2020-01";
+    this.apiVersion = apiVersion || "2020-04";
 
     if (!["admin", "storefront"].includes(api)) {
       throw new Error(
@@ -49,14 +50,14 @@ class GraphQL {
     if (this.api === "admin") {
       this.headers = {
         ...this.headers,
-        "X-Shopify-Access-Token": this.accessToken
+        "X-Shopify-Access-Token": this.accessToken,
       };
     }
 
     if (this.api === "storefront") {
       this.headers = {
         ...this.headers,
-        "X-Shopify-Storefront-Access-Token": this.accessToken
+        "X-Shopify-Storefront-Access-Token": this.accessToken,
       };
     }
 
@@ -73,12 +74,12 @@ class GraphQL {
   ): Promise<any> {
     const body = JSON.stringify({
       query,
-      variables: variables ? variables : undefined
+      variables: variables ? variables : undefined,
     });
 
     const response = await this.fetcher.post(this.url, {
       body,
-      headers: this.headers
+      headers: this.headers,
     });
 
     const result = await this.getResult(response);
@@ -114,14 +115,14 @@ class GraphQL {
     this.accessToken = accessToken;
     this.headers = {
       ...this.headers,
-      "X-Shopify-Access-Token": this.accessToken
+      "X-Shopify-Access-Token": this.accessToken,
     };
   }
 
   public withDetailedCost() {
     this.headers = {
       ...this.headers,
-      "X-Graphql-Cost-Include-Fields": "true"
+      "X-Graphql-Cost-Include-Fields": "true",
     };
   }
 
