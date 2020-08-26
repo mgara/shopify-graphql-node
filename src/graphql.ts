@@ -82,9 +82,18 @@ class GraphQL {
       headers: this.headers,
     });
 
+    const startTime = new Date().getTime();
     const result = await this.getResult(response);
+    const now = new Date().getTime();
+    const delay = now - startTime;
+    const throttelingTimeout = delay > 500 ? 0 : 500 - delay;
+
     if (response.ok && !result.errors && result.data) {
-      return result.data;
+      // tslint:disable-next-line:no-console
+      console.log(`Resolving after throttelingTimeout: ${throttelingTimeout}`);
+      setTimeout(() => {
+        return result.data;
+      }, throttelingTimeout);
     } else {
       const errorResult =
         typeof result === "string" ? { error: result } : result;
