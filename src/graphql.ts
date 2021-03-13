@@ -9,6 +9,7 @@ class GraphQL {
     "Content-Type": "application/json",
   };
   private fetcher: Fetcher;
+  private throttelingDelay: number;
 
   private api: string;
   private apiVersion: string;
@@ -18,6 +19,7 @@ class GraphQL {
     accessToken: string,
     api: string,
     apiVersion: string,
+    throttelingDelay: number,
     fetcher?: Fetcher
   ) {
     this.apiVersion = apiVersion || "2020-04";
@@ -38,6 +40,8 @@ class GraphQL {
     this.accessToken = accessToken;
 
     this.url = "";
+
+    this.throttelingDelay = throttelingDelay || 550;
 
     if (this.api === "admin") {
       this.url = `https://${domain}.myshopify.com/admin/api/${this.apiVersion}/graphql.json`;
@@ -70,7 +74,8 @@ class GraphQL {
 
   public async request<T extends any>(
     query: string,
-    variables?: Variables
+    variables?: Variables,
+    immediate?: boolean
   ): Promise<any> {
     const body = JSON.stringify({
       query,
@@ -86,14 +91,16 @@ class GraphQL {
     const result = await this.getResult(response);
     const now = new Date().getTime();
     const delay = now - startTime;
-    const throttelingTimeout = delay > 500 ? 0 : 500 - delay;
+    const throttelingTimeout =
+      delay > this.throttelingDelay ? 0 : this.throttelingDelay - delay;
 
     if (response.ok && !result.errors && result.data) {
-      // tslint:disable-next-line:no-console
-      console.log(`Resolving after throttelingTimeout: ${throttelingTimeout}`);
-      setTimeout(() => {
+      if (immediate) {
         return result.data;
-      }, throttelingTimeout);
+      }
+
+      const resultData = await this.wait(throttelingTimeout, result.data);
+      return resultData;
     } else {
       const errorResult =
         typeof result === "string" ? { error: result } : result;
@@ -145,6 +152,10 @@ class GraphQL {
 
   public getUrl(): string {
     return this.url;
+  }
+
+  private wait<T>(ms: number, value: T) {
+    return new Promise<T>((resolve) => setTimeout(resolve, ms, value));
   }
 
   private async getResult(response: Response): Promise<any> {
